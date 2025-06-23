@@ -1,0 +1,28 @@
+name: CI/CD to EC2 on Pushing code to master
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    name: Deploy to EC2
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            sudo -u apache bash -c '
+              cd /var/www/html/myedulight_pro
+              git pull origin master
+              '
+            sudo systemctl restart httpd
