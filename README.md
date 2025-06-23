@@ -15,3 +15,6 @@ We need to add three secret :-
 2. User of ec2 instance
 3. Private key of ec2 instance to authenticate 
 ![image](https://github.com/user-attachments/assets/175a7011-3e27-41f2-a9f6-b3ef1844c1b3)
+
+
+Now as soon as we merge in master than our code is deployed in ec2 machine and restart apache service , so we can see latest deployemt
