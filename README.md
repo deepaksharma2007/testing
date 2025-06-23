@@ -6,7 +6,9 @@ Step-2 install git in ec2 machine
 
 `$ yum install git -y`
 
-Step-3 Add secret in github , so github action can connect to our ec2 instance 
+Step-3 We need to generate classic token to pull a private repo inside ec2 machine 
+
+Step-4 Add secret in github , so github action can connect to our ec2 instance 
 
 repo settings  --> Secrets & variable --> Action --> New repository secret 
 
