@@ -29,23 +29,11 @@ $ yum install amazon-cloudwatch-agent -y
 
 ### Step-2 Adding details of httpd to monitor
 Edit your CloudWatch Agent configuration (usually in /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json) to include httpd as a procstat metric.
-`{
-  "metrics": {
-    "metrics_collected": {
-      "procstat": [
-        {
-          "pattern": "httpd",
-          "measurement": [
-            "cpu_usage",
-            "memory_rss",
-            "pid_count"
-          ],
-          "metrics_collection_interval": 60
-        }
-      ]
-    }
-  }
-}`
+We need to add the highlighted part in receiver sections 
+<img width="652" height="399" alt="image" src="https://github.com/user-attachments/assets/f89ece18-8195-40be-b9ad-2d3e4612e854" />
+
+In pipeline section , we need to add highlighted part 
+<img width="575" height="330" alt="image" src="https://github.com/user-attachments/assets/996035d9-d204-4d68-8180-3a108b7c3ff4" />
 
 ### Step-3 Restart cloudwatch agent service 
 `$ sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a stop `
