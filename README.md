@@ -47,6 +47,28 @@ $ sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \
 
 This config collects process-level metrics every 60 seconds for processes matching httpd.
 
+
+OR create a file inside amazon-cloudwatch-agent.d/file1_amazon-cloudwatch-agent.yaml
+`{
+  "metrics": {
+    "metrics_collected": {
+      "procstat": [
+        {
+          "pattern": "httpd",
+          "measurement": [
+            "cpu_usage",
+            "memory_rss",
+            "pid_count"
+          ],
+          "metrics_collection_interval": 60
+        }
+      ]
+    }
+  }
+}
+`
+<img width="754" height="511" alt="image" src="https://github.com/user-attachments/assets/c6bc63d8-18d9-46f7-ae29-8cd70cef5168" />
+
 ### Step-4 Verify metrics in cloudwatch
 Go to CloudWatch Console → Metrics → CWAgent namespace → procstat and look for:
 `procstat_pid_count` for httpd.
