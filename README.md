@@ -20,3 +20,63 @@ We need to add three secret :-
 
 
 Now as soon as we merge in master than our code is deployed in ec2 machine and restart apache service , so we can see latest deployemt
+
+
+=====================================================================================================================================
+# Adding httpd service monitoring by cloudwatch agent
+### Step-1 Install agent 
+$ yum install amazon-cloudwatch-agent -y 
+
+### Step-2 Adding details of httpd to monitor
+Edit your CloudWatch Agent configuration (usually in /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json) to include httpd as a procstat metric.
+`{
+  "metrics": {
+    "metrics_collected": {
+      "procstat": [
+        {
+          "pattern": "httpd",
+          "measurement": [
+            "cpu_usage",
+            "memory_rss",
+            "pid_count"
+          ],
+          "metrics_collection_interval": 60
+        }
+      ]
+    }
+  }
+}`
+
+### Step-3 Restart cloudwatch agent service 
+`$ sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a stop `
+ `$ sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a start`
+
+This config collects process-level metrics every 60 seconds for processes matching httpd.
+
+### Step-4 Verify metrics in cloudwatch
+Go to CloudWatch Console → Metrics → CWAgent namespace → procstat and look for:
+`procstat_pid_count` for httpd.
+
+### Step-5: Create a CloudWatch Alarm
+Go to CloudWatch → Alarms → Create Alarm -> Choose CWAgent / procstat / procstat_pid_count
+Add a dimension filter: process name = httpd
+
+*Condition:*
+- Threshold type: Static
+- Whenever procstat_pid_count is <= 0
+- For at least 1 consecutive data point(s)
+
+*Actions:*
+- Choose or create an SNS topic to send email
+- If creating a new topic:
+ `Enter a name`
+  `Add your email address`
+
+You’ll receive a confirmation email – make sure to confirm it
+
+Name your alarm, e.g., httpd-stopped-alarm
+
+Create the alarm.
+
+✅ Done!
+Now, if your httpd service stops (i.e., no process found), procstat_pid_count becomes 0, and CloudWatch triggers an alarm and sends an email.
