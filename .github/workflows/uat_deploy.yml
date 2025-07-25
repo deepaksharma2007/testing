@@ -1,0 +1,28 @@
+name: CI/CD to EC2 on Pushing code to uat env
+
+on:
+  push:
+    branches:
+      - uat
+
+jobs:
+  deploy:
+    name: Deploy to EC2
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.UAT_SSH_HOST }}
+          username: ${{ secrets.UAT_SSH_USER }}
+          key: ${{ secrets.UAT_PRIVATE_KEY }}
+          script: |
+            sudo -u ec2-user bash -c '
+              cd /var/www/html/laravel-app/
+              sudo git pull origin uat
+              '
+            sudo systemctl restart httpd
